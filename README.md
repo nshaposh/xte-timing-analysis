@@ -4,5 +4,8 @@ Tool for calculating power spectrum and its products from the data collected by 
 
 ------------
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/nshaposh/xte-timing-analysis.git/master)
+
+------------
 Binder link: [https://mybinder.org/v2/gh/nshaposh/xte-timing-analysis.git/master](https://mybinder.org/v2/gh/nshaposh/xte-timing-analysis.git/master)
 This is attempt to recover analysis scripts from my years in NASA.
