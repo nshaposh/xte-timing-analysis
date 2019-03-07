@@ -12,6 +12,4 @@ dependencies:
   - partd
   - bokeh
   - dask
-  - bs4
-  
-  
+  - beautifulsoup4
