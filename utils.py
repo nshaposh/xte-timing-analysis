@@ -3,12 +3,78 @@ from astropy.table import Table
 import numpy as np
 import os
 import sys
+from bs4 import BeautifulSoup
+from urllib.request import urlretrieve
+import requests
+
+def listFD(url, ext=''):
+    page = requests.get(url).text
+    #print(page)
+    soup = BeautifulSoup(page, 'html.parser')
+    return [url + '/' + node.get('href') for node in soup.find_all('a') if node.get('href').endswith(ext)]
 
 
+def get_xte_data_http(obsid,folders=['obs','pca','acs','stdprod'],download_path = '.'):
+    
+    cur_path = os.getcwd()
+    if download_path == ".":
+        download_path == os.getcwd()
+
+
+    legacy_url = "http://legacy.gsfc.nasa.gov/FTP/xte/data/archive"
+    
+    idsplit = obsid.split("-")
+    if len(idsplit) != 4:
+       print("Wrong obsid format!")
+       return -1
+    
+    pid = idsplit[0]
+    ao1 = pid[1]
+    ao0 = pid[0]
+
+    if (ao1 == "0"): ao = "AO" + ao0
+    if (ao0 == "9" and ao1 != "0"): ao = "AO1" + str(int(ao1)-1).strip()
+    dirl = "/".join([ao,"P"+pid, obsid])
+    base_url = legacy_url+'/'+dirl
+
+#   Making Obsid directory
+ 
+    if (not os.path.exists(download_path)):  
+        os.mkdir(download_path)
+        
+    obs_path = os.path.join(download_path,obsid)
+    if (not os.path.exists(obs_path)): 
+        os.mkdir(obs_path)
+
+
+    for folder in folders:
+
+        folder_url = base_url +'/'+folder
+        folder_path = os.path.join(obs_path,folder)
+        if folder == 'obs': 
+            folder_url = base_url
+            folder_path = obs_path
+        if (not os.path.exists(folder_path)):  
+            os.mkdir(folder_path)
+        print("Getting "+folder)
+
+        for f in listFD(folder_url):        
+            file_name = f.split('/')[-1]
+            try:
+                if file_name[0] == '?': continue
+            except:
+                continue
+            print("    Getting "+file_name)
+            try:
+                urlretrieve(f,os.path.join(folder_path,file_name))
+            except:
+                print(f"Failed to get {f}")
+
+    print("Done")
+    
 def get_xte_data(obsid,folders=['obs','pca','acs','stdprod'],download_path = '.'):
 
     import ftplib
-    import os
     
     cur_path = os.getcwd()
     if download_path == ".":
