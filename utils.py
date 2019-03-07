@@ -212,7 +212,7 @@ def get_init_data(obs_path):
         fh = f.strip()
         pth = obs_path +'/'+fh
         if (fh != '') and os.path.exists(pth):
-            fh5c_set.add(path)
+            fh5c_set.add(pth)
         elif (f.strip() != '') and os.path.exists(pth+'.gz'):
             fh5c_set.add(pth+'.gz')
     fh5c = list(fh5c_set)
@@ -268,8 +268,11 @@ def get_init_data(obs_path):
                         pcachan_low[mn] = []
                         pcachan_high[mn] = []
                         exposure[mn] = 0.0
-                        
-                    fid = pyfits.open(obs_path+"/"+mf+".gz")
+                    
+                    fname = os.path.join(obs_path,mf)
+                    if not os.path.exists(fname):
+                        fname = os.path.join(obs_path,mf+'.gz')
+                    fid = pyfits.open(fname)
                     tddes = fid[1].header['TDDES2']
                     #print(tddes)
             #            xte_s = fid[1].header['EXTNAME']
@@ -299,7 +302,7 @@ def get_init_data(obs_path):
 
                         tevtb2 = fid[1].header['TEVTB2']
                         #print(tevtb2)
-                        chan_desc = tevtb2.split('C[')[1].split(']')
+                        chan_desc = tevtb2.split('C[')[1].split(']')[0]
         
                     chan_split = chan_desc.split(',')
 #                        print xxx_split,mn
@@ -375,11 +378,16 @@ def get_init_data(obs_path):
                         #print(coln[:3])
                         tcode = mf[9:24]
                         #print(tcode)
-#                            mf = 'pca/SE_'+tcode+'.evt'
-                        mf = fi.field('PCA_'+coln+'_Event')[m]
+                        mf = 'pca/SE_'+tcode+'.evt'
+                        fname = os.path.join(obs_path,mf)
+                        if not os.path.exists(fname):
+                            fname = os.path.join(obs_path,mf+'.gz')
+
+
+                        #mf = fi.field('PCA_'+coln+'_Event')[m]
                         #print(mf,mn)
-                    if obs_path+'/'+mf.strip()+'.gz' not in pcadata[mn]: 
-                        pcadata[mn].append(obs_path+'/'+mf.strip()+'.gz')
+                    if fname not in pcadata[mn]: 
+                        pcadata[mn].append(fname)
 
             havedata = True
             have_pca = True
