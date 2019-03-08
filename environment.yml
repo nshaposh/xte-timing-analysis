@@ -13,3 +13,5 @@ dependencies:
   - bokeh
   - dask
   - beautifulsoup4
+  - jupyter_contrib_nbextensions
+  
