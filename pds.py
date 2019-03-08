@@ -467,9 +467,9 @@ def pds(
 
         if verbosity > 0:
             if skip == 0:
-                print(" -------- START = %f, STOP = %f Rate = %f"%(time-fft_int,time,ngamma/fft_int))
+                print(" -- START = %f, Rate = %f"%(time-fft_int,ngamma/fft_int))
             else:
-                print(" -------- START = %f, STOP = %f Skipped (code %i). %s"%(time-fft_int,time,skip,skip_message))
+                print(" -- START = %f, Skipped (code %i). %s"%(time-fft_int,skip,skip_message))
 
 
         time += fft_int
@@ -519,7 +519,7 @@ def pds(
 
                     
     if verbosity>0:
-        print('-----XTEPDS finished data pass. Finalizing PDS ----------------------------------')
+        print('-----XTEPDS finished data pass. Finalizing PDS ---------')
 
 #print "Total intervals:", nrange
 
@@ -569,7 +569,7 @@ def pds(
         
     if verbosity>0: 
         print("%i frequency bins are rebinned into %i."%(len(freq),len(freq_reb)))
-        print("------------------------------------------------------------------------------")
+        print("-------------------------------------------------------------------")
 
 # Dead time correction
 
@@ -582,7 +582,7 @@ def pds(
                 print("PCA Dead time correction per Zhang et al. (1995), The Astrophysical Journal, 449:930-935")
             if dtmethod == 'vikhl':
                 print("PCA Dead time correction per Vikhlinin et al. (1994), A&A, 287:73-79")
-        print("------------------------------------------------------------------------------")
+        print("------------------------------------------------------------------")
 
         td = 10.0e-6
         pcuon = pcuon/float(npcuon)
@@ -675,7 +675,7 @@ def pds(
         filt.close()
         pcu2hk.close()
 
-    print("---XTEPDS Finished -----------------------------------------------------------------")
+    print("---XTEPDS Finished -------------------------------------------------------")
 
     return power_reb_cor,error_reb,freq_reb,xax_e_reb,outfile
 
