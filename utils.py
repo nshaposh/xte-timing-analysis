@@ -14,7 +14,13 @@ def listFD(url, ext=''):
     return [url + '/' + node.get('href') for node in soup.find_all('a') if node.get('href').endswith(ext)]
 
 
-def get_xte_data_http(obsid,folders=['obs','pca','acs','stdprod'],download_path = '.'):
+def get_xte_data_http(
+    obsid,
+    folders=['obs','pca','acs','stdprod'],
+    download_path = '.',
+    verbosity = 0
+   ):
+    """ Downloads XTE observation data to the specified location."""
     
     cur_path = os.getcwd()
     if download_path == ".":
@@ -25,8 +31,9 @@ def get_xte_data_http(obsid,folders=['obs','pca','acs','stdprod'],download_path 
     
     idsplit = obsid.split("-")
     if len(idsplit) != 4:
-       print("Wrong obsid format!")
-       return -1
+        if verbosity > 0: 
+            print("Wrong obsid format!")
+        return -1
     
     pid = idsplit[0]
     ao1 = pid[1]
@@ -56,7 +63,7 @@ def get_xte_data_http(obsid,folders=['obs','pca','acs','stdprod'],download_path 
             folder_path = obs_path
         if (not os.path.exists(folder_path)):  
             os.mkdir(folder_path)
-        print("Getting "+folder)
+        if verbosity > 0: print("Getting "+folder)
 
         for f in listFD(folder_url):        
             file_name = f.split('/')[-1]
@@ -64,13 +71,13 @@ def get_xte_data_http(obsid,folders=['obs','pca','acs','stdprod'],download_path 
                 if file_name[0] == '?': continue
             except:
                 continue
-            print("    Getting "+file_name)
+            if verbosity > 0: print("    Getting "+file_name)
             try:
                 urlretrieve(f,os.path.join(folder_path,file_name))
             except:
-                print(f"Failed to get {f}")
+                if verbosity > 0: print(f"Failed to get {f}")
 
-    print("Done")
+    if verbosity > 0: print("Done")
     
 def get_xte_data(obsid,folders=['obs','pca','acs','stdprod'],download_path = '.'):
 
@@ -90,8 +97,8 @@ def get_xte_data(obsid,folders=['obs','pca','acs','stdprod'],download_path = '.'
 
     idsplit = obsid.split("-")
     if len(idsplit) != 4:
-       print("Wrong obsid format!")
-       return -1
+        print("Wrong obsid format!")
+        return -1
     
     pid = idsplit[0]
     ao1 = pid[1]
@@ -109,7 +116,7 @@ def get_xte_data(obsid,folders=['obs','pca','acs','stdprod'],download_path = '.'
         return -1
     
     try:
-       legacy.cwd(dirl)
+        legacy.cwd(dirl)
       
     except:
         return -1
@@ -376,15 +383,20 @@ def get_init_data(obs_path):
                     if mn[:2] == 'E_':
                         coln = fi.columns[k].name[:3]
                         #print(coln[:3])
-                        tcode = mf[9:24]
-                        #print(tcode)
-                        mf = 'pca/SE_'+tcode+'.evt'
+                        #tcode = mf[9:24]
+                        #files = os.listdir(os.path.join(obs_path,'pca'))
+                        #print(files,tcode+'.evt.gz')
+                        #evt_files = [f for f in files if f.find(tcode+'.evt.gz') > -1]
+                        #mf = 'pca'+evt_files[0]
+                        mf = fi.field('PCA_'+coln+'_Event')[m]
+                        #print(f"mf {mf}")
+#                        mf = 'pca/SE_'+tcode+'.evt'
                         fname = os.path.join(obs_path,mf)
                         if not os.path.exists(fname):
                             fname = os.path.join(obs_path,mf+'.gz')
+                        if not os.path.exists(fname):
+                            print(f'file {fname} does not exists')
 
-
-                        #mf = fi.field('PCA_'+coln+'_Event')[m]
                         #print(mf,mn)
                     if fname not in pcadata[mn]: 
                         pcadata[mn].append(fname)
