@@ -1,0 +1,8 @@
+jupyter contrib nbextension install --user
+jupyter nbextension enable --py widgetsnbextension
+jupyter nbextension enable python-markdown/main
+jupyter labextension install jupyterlab_bokeh
+
+# Notebooks w/ extensions that auto-run code must be "trusted" to 
+ork the first time
+jupyter trust pds_example.ipynb
